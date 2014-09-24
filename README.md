@@ -33,9 +33,11 @@ func Track(w http.ResponseWriter, r *http.Request) {
 		// get some data to write
 		rowData := GetRowData(r)
 
+		// yoo can insert just one row, or multiple rows at the same operation
+		rows := []map[string]interface{}{rowData}
+
 		// write the data to the table in the dataset in a specific project
-		client.InsertRow(*projectID, *datasetID, *tableID, rowData)
+		client.InsertRow(*projectID, *datasetID, *tableID, rows)
 	}
 }
-
 ```

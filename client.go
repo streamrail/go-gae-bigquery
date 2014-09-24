@@ -35,15 +35,16 @@ func NewClient(c *appengine.Context) (*Client, error) {
 	}
 }
 
-func (c *Client) InsertRow(projectID string, datasetID string, tableID string, rowData map[string]interface{}) error {
-	jsonRows := make(map[string]bigquery.JsonValue)
-	for key, value := range rowData {
-		jsonRows[key] = bigquery.JsonValue(value)
-	}
-	rows := []*bigquery.TableDataInsertAllRequestRows{
-		{
-			Json: jsonRows,
-		},
+func (c *Client) InsertRows(projectID string, datasetID string, tableID string, rowsData []map[string]interface{}) error {
+	rows := make([]*bigquery.TableDataInsertAllRequestRows, len(rowsData))
+	for i := 0; i < len(rowsData); i++ {
+		r := rowsData[i]
+		jsonRow := make(map[string]bigquery.JsonValue)
+		for key, value := range r {
+			jsonRow[key] = bigquery.JsonValue(value)
+		}
+		rows[i] = new(bigquery.TableDataInsertAllRequestRows)
+		rows[i].Json = jsonRow
 	}
 
 	insertRequest := &bigquery.TableDataInsertAllRequest{Rows: rows}
