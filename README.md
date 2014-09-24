@@ -22,7 +22,7 @@ The package is now imported under the "gobq" namespace.
 
 ## example
 
-The example can be found at examples/example.go. the part you want to look at is the Track function:
+The example can be found at examples-simple/example.go. the part you want to look at is the Track function:
 ```go
 func Track(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
@@ -42,28 +42,41 @@ func Track(w http.ResponseWriter, r *http.Request) {
 }
 ```
 
-To improve performance, you might want to batch your inserts. As long as you don't mind losing some rows here and there when the instance flushes the RAM memory, you can batch your inserts by utilizing the RAM of the currently running instance. Create a slice to be used as a buffer and flush it's content into BigQuery when it reaches a certain predefined limit:
+## batching 
+
+To improve performance, you might want to batch your inserts. As long as you don't mind losing some rows here and there when the instance flushes the RAM memory, you can batch your inserts by utilizing the RAM of the currently running instance. For this purpose the package includes a thread-safe BufferedWrite implementation, which takes care of mutex over a slice of rows, and can be used to flush a batch of rows into BigQuery in a single operation. 
+
+
+The following example flushes the buffer after 3 rows have been appended (a complete example can be found at examples-batching/example.go)
 
 ```go
 
+
 const (
-	MAX_BUFFERED = 10
+	MAX_BUFFERED = 3
 )
+
+var (
+	buff = gobq.NewBufferedWrite(MAX_BUFFERED)
+)
+
+fu
 func Track(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
 	if client, err := gobq.NewClient(&c); err != nil {
 		c.Errorf(err.Error())
 	} else {
 		rowData := GetRowData(r)
-		rowsBuffer = append(rowsBuffer, rowData)
-		c.Infof("buffered rows: %d\n", len(rowsBuffer))
-		if len(rowsBuffer) == MAX_BUFFERED {
-			if err := client.InsertRows(*projectID, *datasetID, *tableID, rowsBuffer); err != nil {
+		if err := buff.Append(rowData); err != nil {
+			c.Errorf(err.Error())
+		}
+		c.Infof("buffered rows: %d\n", buff.Length())
+		if buff.IsFull() {
+			if err := client.InsertRows(*projectID, *datasetID, *tableID, buff.Flush()); err != nil {
 				c.Errorf(err.Error())
 			} else {
-				c.Infof("inserted rows: %d", len(rowsBuffer))
+				c.Infof("inserted rows: %d", buff.Length())
 			}
-			rowsBuffer = rowsBuffer[:0]
 		}
 	}
 }
