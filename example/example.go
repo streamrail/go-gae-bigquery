@@ -3,6 +3,7 @@ package example
 import (
 	"appengine"
 	"flag"
+	"github.com/streamrail/go-gae-bigquery"
 	"net/http"
 	"time"
 )
@@ -42,7 +43,7 @@ func TrackingHandler(w http.ResponseWriter, r *http.Request) {
 func Track(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
 	// create instance of big query client
-	if client, err := NewClient(&c); err != nil {
+	if client, err := gobq.NewClient(&c); err != nil {
 		c.Errorf(err.Error())
 	} else {
 		// get some data to write
