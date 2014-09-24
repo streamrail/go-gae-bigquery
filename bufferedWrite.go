@@ -1,4 +1,4 @@
-package tracking
+package gobq
 
 import (
 	"fmt"
