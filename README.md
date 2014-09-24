@@ -12,10 +12,10 @@ import (
 )
 
 ```
-and go get it:
+and go get it using the goapp gae command:
 
 ```bash
-go get
+goapp get "github.com/streamrail/go-gae-bigquery"
 ```
 
 The package is now imported under the "gobq" namespace. 
