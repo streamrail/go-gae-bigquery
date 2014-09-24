@@ -60,7 +60,6 @@ var (
 	buff = gobq.NewBufferedWrite(MAX_BUFFERED)
 )
 
-fu
 func Track(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
 	if client, err := gobq.NewClient(&c); err != nil {
