@@ -44,7 +44,7 @@ func Track(w http.ResponseWriter, r *http.Request) {
 
 ## batching 
 
-To improve performance, you might want to batch your inserts. As long as you don't mind losing some rows here and there when the instance flushes the RAM memory, you can batch your inserts by utilizing the RAM of the currently running instance. For this purpose the package includes a thread-safe BufferedWrite implementation, which takes care of mutex over a slice of rows, and can be used to flush a batch of rows into BigQuery in a single operation. 
+To improve performance, you might want to batch your inserts. A request that only appends a row to a buffer takes about 60ms, while a request that performs an actual inserts takes about 1.3 sec! As long as you don't mind losing some rows here and there when the instance flushes the RAM memory, you can batch your inserts by utilizing the RAM of the currently running instance. For this purpose the package includes a thread-safe BufferedWrite implementation, which takes care of mutex over a slice of rows, and can be used to flush a batch of rows into BigQuery in a single operation. 
 
 
 The following example flushes the buffer after 3 rows have been appended (a complete example can be found at examples-batching/example.go)
