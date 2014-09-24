@@ -42,7 +42,7 @@ func Track(w http.ResponseWriter, r *http.Request) {
 }
 ```
 
-To improve performance, you might want to batch your inserts. As long as you don't mind to lose some rows here and there when the instance flushes the RAM memory, you can batch your inserts by utilizing the RAM of the currently running instance. Create a slice to be used as a buffer and flush it's content into BigQuery when it reaches a certain predefined limit:
+To improve performance, you might want to batch your inserts. As long as you don't mind losing some rows here and there when the instance flushes the RAM memory, you can batch your inserts by utilizing the RAM of the currently running instance. Create a slice to be used as a buffer and flush it's content into BigQuery when it reaches a certain predefined limit:
 
 ```go
 
