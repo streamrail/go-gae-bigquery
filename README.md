@@ -67,39 +67,4 @@ To improve performance, you might want to batch your inserts. A request that onl
 
 For this purpose the package includes a thread-safe BufferedWrite implementation, which takes care of mutex over a slice of rows, and can be used to flush a batch of rows into BigQuery in a single operation. 
 
-Be sure to set the MAX_BUFFERED to a feasible number: tere are [a few limitations](https://cloud.google.com/bigquery/streaming-data-into-bigquery#quota) for batching, they suggest not to use a MAX_BUFFERED size of more than 500 etc. 
-
-The following example flushes the buffer after 3 rows have been appended (a complete example can be found at examples-batching/example.go):
-
-```go
-
-
-const (
-	MAX_BUFFERED = 3
-)
-
-var (
-	buff = gobq.NewBufferedWrite(MAX_BUFFERED)
-)
-
-func Track(w http.ResponseWriter, r *http.Request) {
-	c := appengine.NewContext(r)
-	if client, err := gobq.NewClient(&c); err != nil {
-		c.Errorf(err.Error())
-	} else {
-		rowData := GetRowData(r)
-		if err := buff.Append(rowData); err != nil {
-			c.Errorf(err.Error())
-		}
-		c.Infof("buffered rows: %d\n", buff.Length())
-		if buff.IsFull() {
-			if err := client.InsertRows(*projectID, *datasetID, *tableID, buff.Flush()); err != nil {
-				c.Errorf(err.Error())
-			} else {
-				c.Infof("inserted rows: %d", buff.Length())
-			}
-		}
-	}
-}
-
-```
+Be sure to set the MAX_BUFFERED to a feasible number: there are [a few limitations](https://cloud.google.com/bigquery/streaming-data-into-bigquery#quota) for batching, they suggest not to use a MAX_BUFFERED size of more than 500 etc. 
