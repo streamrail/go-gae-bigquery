@@ -15,16 +15,16 @@ type BufferedWrite struct {
 
 func (b *BufferedWrite) Append(r Row) error {
 	if b.IsFull() {
-		return fmt.Errorf("cannot append to buffer, capacity exceeded: %d elements", len(b.rows))
+		return fmt.Errorf("cannot append to buffer, capacity exceeded: %d elements", len(b.Rows))
 	}
 	b.Lock()
 	defer b.Unlock()
-	b.rows = append(b.Rows, r)
+	b.Rows = append(b.Rows, r)
 	return nil
 }
 
 func (b *BufferedWrite) Length() int {
-	return len(b.rows)
+	return len(b.Rows)
 }
 
 func (b *BufferedWrite) Capacity() int {
@@ -32,18 +32,18 @@ func (b *BufferedWrite) Capacity() int {
 }
 
 func (b *BufferedWrite) IsFull() bool {
-	return len(b.rows) == b.capacity
+	return len(b.Rows) == b.capacity
 }
 
 func (b *BufferedWrite) Reset() {
 	b.Lock()
 	defer b.Unlock()
-	b.rows = make([]Row, 0, b.capacity)
+	b.Rows = make([]Row, 0, b.capacity)
 }
 
 func (b *BufferedWrite) Flush() []Row {
 	defer b.Reset()
-	return b.rows
+	return b.Rows
 }
 
 func NewBufferedWrite(c int) *BufferedWrite {
