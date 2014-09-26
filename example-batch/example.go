@@ -3,6 +3,7 @@ package example
 import (
 	"appengine"
 	"flag"
+	"fmt"
 	"github.com/streamrail/go-gae-bigquery"
 	"net/http"
 	"time"
@@ -21,13 +22,13 @@ const (
 
 func init() {
 	if *projectID == "" {
-		return nil, nil, fmt.Errorf("No project id specified")
+		fmt.Println("No project id specified")
 	}
 	if *datasetID == "" {
-		return nil, nil, fmt.Errorf("No project id specified")
+		fmt.Println("No project id specified")
 	}
 	if *tableID == "" {
-		return nil, nil, fmt.Errorf("No project id specified")
+		fmt.Println("No project id specified")
 	}
 	http.HandleFunc("/track", TrackingHandler)
 }
@@ -65,8 +66,8 @@ func Track(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func GetRowData(r *http.Request) map[string]interface{} {
-	m := map[string]interface{}{
+func GetRowData(r *http.Request) gobq.Row {
+	m := gobq.Row{
 		"Category": `json:"category"`,
 		"Action":   `json:"action"`,
 		"Label":    `json:"label"`,

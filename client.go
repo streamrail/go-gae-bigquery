@@ -35,7 +35,7 @@ func NewClient(c *appengine.Context) (*Client, error) {
 	}
 }
 
-func (c *Client) InsertRows(projectID string, datasetID string, tableID string, rowsData []map[string]interface{}) error {
+func (c *Client) InsertRows(projectID string, datasetID string, tableID string, rowsData []Row) error {
 	rows := make([]*bigquery.TableDataInsertAllRequestRows, len(rowsData))
 	for i := 0; i < len(rowsData); i++ {
 		r := rowsData[i]
