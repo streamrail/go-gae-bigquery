@@ -48,8 +48,7 @@ To improve performance, you might want to batch your inserts. A request that onl
 
 For this purpose the package includes a thread-safe BufferedWrite implementation, which takes care of mutex over a slice of rows, and can be used to flush a batch of rows into BigQuery in a single operation. 
 
-Be sure to set the MAX_BUFFERED to a feasible number (depending on your data, 10K for example may be too much for GAE to handle, as there is a maximum RAM usage limitation an instance can consume by means of variable assignment).
-
+Be sure to set the MAX_BUFFERED to a feasible number: tere are [a few limitations](https://cloud.google.com/bigquery/streaming-data-into-bigquery#quota) for batching, they suggest not to use a MAX_BUFFERED size of more than 500 etc. 
 
 The following example flushes the buffer after 3 rows have been appended (a complete example can be found at examples-batching/example.go):
 

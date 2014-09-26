@@ -5,49 +5,49 @@ import (
 	"sync"
 )
 
+type Row map[string]interface{}
+
 type BufferedWrite struct {
 	sync.RWMutex
-	Rows     []map[string]interface{}
-	Capacity int
+	Rows     []Row
+	capacity int
 }
 
-func (b *BufferedWrite) Append(row map[string]interface{}) error {
+func (b *BufferedWrite) Append(r Row) error {
+	if b.IsFull() {
+		return fmt.Errorf("cannot append to buffer, capacity exceeded: %d elements", len(b.rows))
+	}
 	b.Lock()
 	defer b.Unlock()
-	if len(b.Rows) == b.Capacity {
-		return fmt.Errorf("cannot append to buffer, capacity exceeded: %d elements", len(b.Rows))
-	}
-	b.Rows = append(b.Rows, row)
+	b.rows = append(b.Rows, r)
 	return nil
 }
 
 func (b *BufferedWrite) Length() int {
-	b.RLock()
-	defer b.RUnlock()
-	return len(b.Rows)
+	return len(b.rows)
+}
+
+func (b *BufferedWrite) Capacity() int {
+	return b.capacity
 }
 
 func (b *BufferedWrite) IsFull() bool {
-	len := b.Length()
-	return len == b.Capacity
+	return len(b.rows) == b.capacity
 }
 
 func (b *BufferedWrite) Reset() {
 	b.Lock()
 	defer b.Unlock()
-	b.Rows = b.Rows[:0]
+	b.rows = make([]Row, 0, b.capacity)
 }
 
-func (b *BufferedWrite) Flush() []map[string]interface{} {
-	b.RLock()
+func (b *BufferedWrite) Flush() []Row {
 	defer b.Reset()
-	defer b.RUnlock()
-	return b.Rows
+	return b.rows
 }
 
 func NewBufferedWrite(c int) *BufferedWrite {
-	return &BufferedWrite{
-		Rows:     *new([]map[string]interface{}),
-		Capacity: c,
-	}
+	b := &BufferedWrite{capacity: c}
+	b.Reset()
+	return b
 }
