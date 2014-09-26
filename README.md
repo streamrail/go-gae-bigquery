@@ -22,7 +22,18 @@ The package is now imported under the "gobq" namespace.
 
 ## example
 
-The example can be found at examples-simple/example.go. the part you want to look at is the Track function:
+Running the example:
+
+```bash
+git clone https://github.com/StreamRail/go-gae-bigquery.git
+cd go-gae-bigquery
+cd example-batch
+
+goapp get "github.com/streamrail/go-gae-bigquery"
+goapp serve 
+```
+
+The example may be found at examples-batch/example.go. The part you want to look at is the Track function:
 ```go
 func Track(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
@@ -32,12 +43,20 @@ func Track(w http.ResponseWriter, r *http.Request) {
 	} else {
 		// get some data to write
 		rowData := GetRowData(r)
-
-		// yoo can insert just one row, or multiple rows at the same operation
-		rows := []map[string]interface{}{rowData}
-
-		// write the data to the table in the dataset in a specific project
-		client.InsertRow(*projectID, *datasetID, *tableID, rows)
+		// append the row to the buffer
+		if err := buff.Append(rowData); err != nil {
+			c.Errorf(err.Error())
+		}
+		c.Infof("buffered rows: %d\n", buff.Length())
+		// if the buffer is full, flush it into big query.
+		// the flushing resets the buffer and you can accumulate rows again
+		if buff.IsFull() {
+			if err := client.InsertRows(*projectID, *datasetID, *tableID, buff.Flush()); err != nil {
+				c.Errorf(err.Error())
+			} else {
+				c.Infof("inserted rows: %d", buff.Length())
+			}
+		}
 	}
 }
 ```

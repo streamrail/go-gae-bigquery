@@ -48,14 +48,19 @@ func TrackingHandler(w http.ResponseWriter, r *http.Request) {
 
 func Track(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
+	// create instance of big query client
 	if client, err := gobq.NewClient(&c); err != nil {
 		c.Errorf(err.Error())
 	} else {
+		// get some data to write
 		rowData := GetRowData(r)
+		// append the row to the buffer
 		if err := buff.Append(rowData); err != nil {
 			c.Errorf(err.Error())
 		}
 		c.Infof("buffered rows: %d\n", buff.Length())
+		// if the buffer is full, flush it into big query.
+		// the flushing resets the buffer and you can accumulate rows again
 		if buff.IsFull() {
 			if err := client.InsertRows(*projectID, *datasetID, *tableID, buff.Flush()); err != nil {
 				c.Errorf(err.Error())
