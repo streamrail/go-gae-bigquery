@@ -33,6 +33,11 @@ goapp get "github.com/streamrail/go-gae-bigquery"
 goapp serve 
 ```
 
+Running tests (currently only for bufferedWrite.go, to test the client.go file we need to setup a local BigQuery dev environment):
+```bash
+goapp test "github.com/streamrail/go-gae-bigquery"
+```
+
 The example may be found at examples-batch/example.go. The part you want to look at is the Track function:
 ```go
 func Track(w http.ResponseWriter, r *http.Request) {
