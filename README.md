@@ -1,4 +1,4 @@
-# go-gae-bigquery [![Build Status](https://travis-ci.org/StreamRail/go-gae-bigquery.svg?branch=master)](https://travis-ci.org/StreamRail/go-gae-bigquery)
+# go-gae-bigquery [![Build Status](https://travis-ci.org/streamrail/go-gae-bigquery.svg?branch=master)](https://travis-ci.org/streamrail/go-gae-bigquery)
 
 A nice little package to abstract usage of the BigQuery service on GAE. Currently supports only inserting rows (queries coming soon, feel free to fork and add stuff!)
 
