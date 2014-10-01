@@ -73,3 +73,7 @@ To improve performance, you might want to batch your inserts. A request that onl
 For this purpose the package includes a thread-safe BufferedWrite implementation, which takes care of mutex over a slice of rows, and can be used to flush a batch of rows into BigQuery in a single operation. 
 
 Be sure to set the MAX_BUFFERED to a feasible number: there are [a few limitations](https://cloud.google.com/bigquery/streaming-data-into-bigquery#quota) for batching, they suggest not to use a MAX_BUFFERED size of more than 500 etc. 
+
+
+## license 
+MIT (see [LICENSE](https://github.com/streamrail/godzilla/blob/master/LICENSE) file)
