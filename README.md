@@ -76,4 +76,4 @@ Be sure to set the MAX_BUFFERED to a feasible number: there are [a few limitatio
 
 
 ## license 
-MIT (see [LICENSE](https://github.com/streamrail/godzilla/blob/master/LICENSE) file)
+MIT (see [LICENSE](https://github.com/streamrail/go-gae-bigquery/blob/master/LICENSE) file)
